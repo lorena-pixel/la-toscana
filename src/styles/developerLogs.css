@@ -1,0 +1,273 @@
+.developer-logs-refresh {
+  padding: 11px 16px;
+
+  border: 1px solid #cfd7e4;
+  border-radius: 9px;
+
+  background: white;
+  color: #445775;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.developer-logs-refresh:hover {
+  background: #f4f7fb;
+}
+
+.developer-logs-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 20px;
+}
+
+.developer-logs-clear {
+  padding: 9px 13px;
+
+  border: 1px solid #e1b8be;
+  border-radius: 8px;
+
+  background: #fff0f2;
+  color: #9a3b47;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.developer-logs-clear:disabled {
+  opacity: 0.45;
+
+  cursor: not-allowed;
+}
+
+.developer-logs-filters {
+  margin-bottom: 22px;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(220px, 1fr)
+    180px
+    180px
+    auto;
+
+  gap: 10px;
+}
+
+.developer-logs-filters input,
+.developer-logs-filters select,
+.developer-logs-filters button {
+  min-height: 42px;
+
+  padding: 9px 11px;
+
+  border: 1px solid #d6dde7;
+  border-radius: 8px;
+
+  background: white;
+  color: #4a576c;
+
+  outline: none;
+}
+
+.developer-logs-filters button {
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.developer-logs-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.developer-log {
+  position: relative;
+
+  padding: 17px;
+
+  display: flex;
+  align-items: flex-start;
+
+  gap: 14px;
+
+  border: 1px solid #e0e5ec;
+  border-radius: 10px;
+
+  background: #fafbfd;
+}
+
+.developer-log__marker {
+  width: 10px;
+  height: 10px;
+
+  margin-top: 6px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #6f88b1;
+}
+
+.developer-log--warning
+  .developer-log__marker {
+  background: #c49436;
+}
+
+.developer-log--error
+  .developer-log__marker {
+  background: #b64c59;
+}
+
+.developer-log__content {
+  min-width: 0;
+
+  flex: 1;
+}
+
+.developer-log__top {
+  margin-bottom: 7px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+}
+
+.developer-log__top > div {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 6px;
+}
+
+.developer-log__type,
+.developer-log__level {
+  padding: 4px 7px;
+
+  border-radius: 999px;
+
+  font-size: 0.65rem;
+  font-weight: 900;
+
+  text-transform: uppercase;
+}
+
+.developer-log__type {
+  background: #e9eef6;
+  color: #536987;
+}
+
+.developer-log__level--info {
+  background: #edf2f8;
+  color: #54667d;
+}
+
+.developer-log__level--warning {
+  background: #fff5dd;
+  color: #956b1b;
+}
+
+.developer-log__level--error {
+  background: #ffe9ec;
+  color: #9e3f4b;
+}
+
+.developer-log time {
+  color: #929cac;
+
+  font-size: 0.72rem;
+}
+
+.developer-log h3 {
+  margin-bottom: 6px;
+
+  color: #354158;
+
+  font-size: 0.95rem;
+}
+
+.developer-log p {
+  color: #7c8696;
+
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.developer-log__delete {
+  flex-shrink: 0;
+
+  padding: 6px 8px;
+
+  border: none;
+
+  background: transparent;
+  color: #a95862;
+
+  font-size: 0.72rem;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.developer-logs-empty {
+  padding: 50px 20px;
+
+  text-align: center;
+}
+
+.developer-logs-empty > div {
+  margin-bottom: 12px;
+
+  font-size: 2rem;
+}
+
+.developer-logs-empty h3 {
+  margin-bottom: 7px;
+
+  color: #354158;
+}
+
+.developer-logs-empty p {
+  color: #7e8898;
+}
+
+@media (max-width: 850px) {
+  .developer-logs-filters {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .developer-logs-heading {
+    flex-direction: column;
+  }
+
+  .developer-logs-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .developer-log {
+    flex-wrap: wrap;
+  }
+
+  .developer-log__top {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .developer-log__delete {
+    width: 100%;
+
+    text-align: left;
+  }
+}

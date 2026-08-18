@@ -1,0 +1,142 @@
+.developer-settings-message {
+  margin-bottom: 20px;
+
+  padding: 13px 16px;
+
+  border: 1px solid #b9d8bf;
+  border-radius: 10px;
+
+  background: #edf8ef;
+  color: #3e7048;
+
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.developer-settings-form {
+  display: flex;
+  flex-direction: column;
+
+  gap: 22px;
+}
+
+.developer-settings-section {
+  margin-top: 0;
+}
+
+.developer-settings-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(2, 1fr);
+
+  gap: 16px;
+}
+
+.developer-settings-grid label,
+.developer-settings-notes {
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+
+  color: #59667b;
+
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.developer-settings-grid input,
+.developer-settings-grid select,
+.developer-settings-notes textarea {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  border: 1px solid #d5dde8;
+  border-radius: 9px;
+
+  background: #fbfcfe;
+  color: #354158;
+
+  outline: none;
+}
+
+.developer-settings-grid input:focus,
+.developer-settings-grid select:focus,
+.developer-settings-notes textarea:focus {
+  border-color: #718dbb;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(88, 119, 173, 0.1);
+}
+
+.developer-settings-notes textarea {
+  resize: vertical;
+
+  min-height: 130px;
+}
+
+.developer-settings-updated {
+  margin-top: 15px;
+
+  color: #818b9b;
+
+  font-size: 0.78rem;
+}
+
+.developer-settings-updated strong {
+  color: #526079;
+}
+
+.developer-settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.developer-settings-actions button {
+  padding: 12px 17px;
+
+  border-radius: 9px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.developer-settings-reset {
+  border: 1px solid #d2dae5;
+
+  background: white;
+  color: #59667a;
+}
+
+.developer-settings-save {
+  border: none;
+
+  background: #5877ad;
+  color: white;
+}
+
+.developer-settings-save:hover {
+  background: #49699f;
+}
+
+@media (max-width: 700px) {
+  .developer-settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .developer-settings-actions {
+    flex-direction: column;
+  }
+
+  .developer-settings-actions button {
+    width: 100%;
+  }
+}

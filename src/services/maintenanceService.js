@@ -10,7 +10,6 @@ import {
 
 import {
   getVisits,
-  saveVisits,
 } from "./visitService";
 
 import {
@@ -18,16 +17,14 @@ import {
   saveCashMovements,
 } from "./cashService";
 
+import {
+  createLog,
+} from "./logService";
+
 
 const AUTO_BACKUP_KEY =
   "laToscanaMaintenanceBackups";
 
-
-/*
-=========================
-BACKUP DE SEGURIDAD
-=========================
-*/
 
 export function createMaintenanceBackup() {
   try {
@@ -37,7 +34,6 @@ export function createMaintenanceBackup() {
           AUTO_BACKUP_KEY
         )
       ) || [];
-
 
     const backup = {
       id:
@@ -65,12 +61,10 @@ export function createMaintenanceBackup() {
       },
     };
 
-
     const updatedBackups = [
       backup,
       ...backups,
     ].slice(0, 10);
-
 
     localStorage.setItem(
       AUTO_BACKUP_KEY,
@@ -79,6 +73,18 @@ export function createMaintenanceBackup() {
       )
     );
 
+    createLog({
+      type: "BACKUP",
+      title:
+        "Backup de mantenimiento creado",
+      description:
+        "Se ha creado una copia automática antes de realizar tareas de mantenimiento.",
+      level: "info",
+      metadata: {
+        backupId:
+          backup.id,
+      },
+    });
 
     return {
       success: true,
@@ -90,22 +96,23 @@ export function createMaintenanceBackup() {
       error
     );
 
+    createLog({
+      type: "BACKUP",
+      title:
+        "Error creando backup",
+      description:
+        "No se pudo crear la copia automática de mantenimiento.",
+      level: "error",
+    });
 
     return {
       success: false,
-
       message:
         "No se pudo crear la copia de seguridad.",
     };
   }
 }
 
-
-/*
-=========================
-ANALIZAR REPARACIONES
-=========================
-*/
 
 export function getSafeRepairs() {
   const bookings =
@@ -143,7 +150,9 @@ export function getSafeRepairs() {
     new Set(
       tables.map(
         (table) =>
-          Number(table.id)
+          Number(
+            table.id
+          )
       )
     );
 
@@ -151,15 +160,8 @@ export function getSafeRepairs() {
   const repairs = [];
 
 
-  /*
-  =========================
-  MESAS
-  =========================
-  */
-
   tables.forEach(
     (table) => {
-
       if (
         table.bookingId &&
         !bookingIds.has(
@@ -279,15 +281,8 @@ export function getSafeRepairs() {
   );
 
 
-  /*
-  =========================
-  RESERVAS
-  =========================
-  */
-
   bookings.forEach(
     (booking) => {
-
       if (
         booking.tableId &&
         !tableIds.has(
@@ -323,18 +318,8 @@ export function getSafeRepairs() {
   );
 
 
-  /*
-  =========================
-  CAJA
-  =========================
-
-  Nunca eliminamos el movimiento
-  económico automáticamente.
-  */
-
   movements.forEach(
     (movement) => {
-
       if (
         movement.bookingId &&
         !bookingIds.has(
@@ -397,22 +382,10 @@ export function getSafeRepairs() {
 }
 
 
-/*
-=========================
-REPARAR UN PROBLEMA
-=========================
-*/
-
 export function applySafeRepair(
   repair
 ) {
   try {
-
-    /*
-    -------------------------
-    LIBERAR MESA
-    -------------------------
-    */
 
     if (
       repair.type ===
@@ -420,7 +393,6 @@ export function applySafeRepair(
     ) {
       const tables =
         getTables();
-
 
       const updatedTables =
         tables.map(
@@ -444,11 +416,31 @@ export function applySafeRepair(
               : table
         );
 
-
       saveTables(
         updatedTables
       );
 
+      createLog({
+        type:
+          "MANTENIMIENTO",
+
+        title:
+          repair.title,
+
+        description:
+          repair.description,
+
+        level:
+          "warning",
+
+        metadata: {
+          repairId:
+            repair.id,
+
+          tableId:
+            repair.tableId,
+        },
+      });
 
       return {
         success: true,
@@ -456,19 +448,12 @@ export function applySafeRepair(
     }
 
 
-    /*
-    -------------------------
-    QUITAR MESA DE RESERVA
-    -------------------------
-    */
-
     if (
       repair.type ===
       "remove-booking-table"
     ) {
       const bookings =
         getBookings();
-
 
       const updatedBookings =
         bookings.map(
@@ -491,11 +476,31 @@ export function applySafeRepair(
               : booking
         );
 
-
       saveBookings(
         updatedBookings
       );
 
+      createLog({
+        type:
+          "MANTENIMIENTO",
+
+        title:
+          repair.title,
+
+        description:
+          repair.description,
+
+        level:
+          "warning",
+
+        metadata: {
+          repairId:
+            repair.id,
+
+          bookingId:
+            repair.bookingId,
+        },
+      });
 
       return {
         success: true,
@@ -503,19 +508,12 @@ export function applySafeRepair(
     }
 
 
-    /*
-    -------------------------
-    CAJA / RESERVA
-    -------------------------
-    */
-
     if (
       repair.type ===
       "remove-cash-booking-reference"
     ) {
       const movements =
         getCashMovements();
-
 
       const updatedMovements =
         movements.map(
@@ -531,11 +529,31 @@ export function applySafeRepair(
               : movement
         );
 
-
       saveCashMovements(
         updatedMovements
       );
 
+      createLog({
+        type:
+          "MANTENIMIENTO",
+
+        title:
+          repair.title,
+
+        description:
+          repair.description,
+
+        level:
+          "warning",
+
+        metadata: {
+          repairId:
+            repair.id,
+
+          movementId:
+            repair.movementId,
+        },
+      });
 
       return {
         success: true,
@@ -543,19 +561,12 @@ export function applySafeRepair(
     }
 
 
-    /*
-    -------------------------
-    CAJA / VISITA
-    -------------------------
-    */
-
     if (
       repair.type ===
       "remove-cash-visit-reference"
     ) {
       const movements =
         getCashMovements();
-
 
       const updatedMovements =
         movements.map(
@@ -571,11 +582,31 @@ export function applySafeRepair(
               : movement
         );
 
-
       saveCashMovements(
         updatedMovements
       );
 
+      createLog({
+        type:
+          "MANTENIMIENTO",
+
+        title:
+          repair.title,
+
+        description:
+          repair.description,
+
+        level:
+          "warning",
+
+        metadata: {
+          repairId:
+            repair.id,
+
+          movementId:
+            repair.movementId,
+        },
+      });
 
       return {
         success: true,
@@ -596,6 +627,20 @@ export function applySafeRepair(
       error
     );
 
+    createLog({
+      type:
+        "MANTENIMIENTO",
+
+      title:
+        "Error durante una reparación",
+
+      description:
+        repair?.title ||
+        "No se pudo completar una reparación.",
+
+      level:
+        "error",
+    });
 
     return {
       success: false,
@@ -607,12 +652,6 @@ export function applySafeRepair(
 }
 
 
-/*
-=========================
-REPARAR TODO LO SEGURO
-=========================
-*/
-
 export function applyAllSafeRepairs() {
   const repairs =
     getSafeRepairs();
@@ -621,6 +660,21 @@ export function applyAllSafeRepairs() {
   if (
     repairs.length === 0
   ) {
+    createLog({
+      type:
+        "MANTENIMIENTO",
+
+      title:
+        "Comprobación sin reparaciones",
+
+      description:
+        "No se encontraron problemas reparables automáticamente.",
+
+      level:
+        "info",
+    });
+
+
     return {
       success: true,
 
@@ -670,13 +724,41 @@ export function applyAllSafeRepairs() {
   );
 
 
+  createLog({
+    type:
+      "MANTENIMIENTO",
+
+    title:
+      "Reparación múltiple completada",
+
+    description:
+      `${repaired} problemas se han reparado automáticamente.`,
+
+    level:
+      repaired > 0
+        ? "warning"
+        : "info",
+
+    metadata: {
+      repaired,
+
+      backupId:
+        backupResult
+          .backup
+          .id,
+    },
+  });
+
+
   return {
     success: true,
 
     repaired,
 
     backupId:
-      backupResult.backup.id,
+      backupResult
+        .backup
+        .id,
 
     message:
       `${repaired} problemas se han reparado correctamente.`,

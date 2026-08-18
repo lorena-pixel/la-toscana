@@ -84,6 +84,20 @@ function DeveloperSidebar() {
           Mantenimiento
         </NavLink>
 
+
+        <NavLink
+          to="/developer/logs"
+        >
+          Logs
+        </NavLink>
+
+
+        <NavLink
+          to="/developer/configuracion"
+        >
+          Configuración técnica
+        </NavLink>
+
       </nav>
 
 

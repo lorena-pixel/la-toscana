@@ -18,6 +18,10 @@ import {
   getCustomers,
 } from "./customerService";
 
+import {
+  createLog,
+} from "./logService";
+
 
 function normalizeEmail(
   value = ""
@@ -602,12 +606,15 @@ export function runSystemDiagnostics() {
   }
 
 
-  return {
+    const checkedAt =
+    new Date()
+      .toISOString();
+
+
+  const result = {
     status,
 
-    checkedAt:
-      new Date()
-        .toISOString(),
+    checkedAt,
 
     totals: {
       customers:
@@ -638,4 +645,98 @@ export function runSystemDiagnostics() {
 
     warnings,
   };
+
+
+  /*
+  =========================
+  REGISTRO EN LOGS
+  =========================
+  */
+
+  if (
+    status === "healthy"
+  ) {
+    createLog({
+      type:
+        "DIAGNÓSTICO",
+
+      title:
+        "Sistema comprobado correctamente",
+
+      description:
+        `Diagnóstico completado sin problemas. ${customers.length} clientes, ${bookings.length} reservas, ${visits.length} visitas, ${tables.length} mesas y ${movements.length} movimientos comprobados.`,
+
+      level:
+        "info",
+
+      metadata: {
+        checkedAt,
+
+        errors: 0,
+
+        warnings: 0,
+      },
+    });
+  }
+
+
+  if (
+    status === "warning"
+  ) {
+    createLog({
+      type:
+        "DIAGNÓSTICO",
+
+      title:
+        "Diagnóstico con advertencias",
+
+      description:
+        `Se han detectado ${warnings.length} advertencias y ${errors.length} errores.`,
+
+      level:
+        "warning",
+
+      metadata: {
+        checkedAt,
+
+        errors:
+          errors.length,
+
+        warnings:
+          warnings.length,
+      },
+    });
+  }
+
+
+  if (
+    status === "error"
+  ) {
+    createLog({
+      type:
+        "DIAGNÓSTICO",
+
+      title:
+        "Diagnóstico con errores",
+
+      description:
+        `Se han detectado ${errors.length} errores y ${warnings.length} advertencias.`,
+
+      level:
+        "error",
+
+      metadata: {
+        checkedAt,
+
+        errors:
+          errors.length,
+
+        warnings:
+          warnings.length,
+      },
+    });
+  }
+
+
+  return result;
 }

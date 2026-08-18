@@ -1,3 +1,8 @@
+import {
+  createLog,
+} from "./logService";
+
+
 const BACKUP_KEYS = {
   bookings: "laToscanaBookings",
   customers: "laToscanaCustomers",
@@ -8,7 +13,11 @@ const BACKUP_KEYS = {
   settings: "laToscanaSettings",
 };
 
-function getStoredValue(key, fallback) {
+
+function getStoredValue(
+  key,
+  fallback
+) {
   try {
     const raw =
       localStorage.getItem(key);
@@ -23,14 +32,19 @@ function getStoredValue(key, fallback) {
   }
 }
 
+
 export function createBackupData() {
   const backup = {
     meta: {
       app: "La Toscana",
       version: 1,
+
       createdAt:
-        new Date().toISOString(),
-      type: "full-backup",
+        new Date()
+          .toISOString(),
+
+      type:
+        "full-backup",
     },
 
     data: {
@@ -78,8 +92,10 @@ export function createBackupData() {
     },
   };
 
+
   return backup;
 }
+
 
 export function getBackupSummary(
   backup
@@ -115,89 +131,163 @@ export function getBackupSummary(
   };
 }
 
+
 export function downloadBackup() {
-  const backup =
-    createBackupData();
+  try {
+    const backup =
+      createBackupData();
 
-  const json =
-    JSON.stringify(
+
+    const summary =
+      getBackupSummary(
+        backup
+      );
+
+
+    const json =
+      JSON.stringify(
+        backup,
+        null,
+        2
+      );
+
+
+    const blob =
+      new Blob(
+        [json],
+        {
+          type:
+            "application/json",
+        }
+      );
+
+
+    const url =
+      URL.createObjectURL(
+        blob
+      );
+
+
+    const date =
+      new Date();
+
+
+    const year =
+      date.getFullYear();
+
+
+    const month =
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0");
+
+
+    const day =
+      String(
+        date.getDate()
+      ).padStart(2, "0");
+
+
+    const hours =
+      String(
+        date.getHours()
+      ).padStart(2, "0");
+
+
+    const minutes =
+      String(
+        date.getMinutes()
+      ).padStart(2, "0");
+
+
+    const filename =
+      `la-toscana-backup-${year}-${month}-${day}-${hours}${minutes}.json`;
+
+
+    const link =
+      document.createElement(
+        "a"
+      );
+
+
+    link.href =
+      url;
+
+    link.download =
+      filename;
+
+
+    document.body.appendChild(
+      link
+    );
+
+
+    link.click();
+
+
+    document.body.removeChild(
+      link
+    );
+
+
+    URL.revokeObjectURL(
+      url
+    );
+
+
+    createLog({
+      type: "BACKUP",
+
+      title:
+        "Copia de seguridad descargada",
+
+      description:
+        `Se ha creado ${filename}. Incluye ${summary.customers} clientes, ${summary.bookings} reservas, ${summary.visits} visitas, ${summary.cash} movimientos, ${summary.tables} mesas y ${summary.menu} elementos de carta.`,
+
+      level: "info",
+
+      metadata: {
+        filename,
+        summary,
+      },
+    });
+
+
+    return {
+      success: true,
+      filename,
       backup,
-      null,
-      2
+    };
+
+  } catch (error) {
+    console.error(
+      "No se pudo crear la copia de seguridad:",
+      error
     );
 
-  const blob =
-    new Blob(
-      [json],
-      {
-        type:
-          "application/json",
-      }
-    );
 
-  const url =
-    URL.createObjectURL(
-      blob
-    );
+    createLog({
+      type: "BACKUP",
 
-  const date =
-    new Date();
+      title:
+        "Error creando copia de seguridad",
 
-  const year =
-    date.getFullYear();
+      description:
+        "No se pudo generar o descargar la copia de seguridad.",
 
-  const month =
-    String(
-      date.getMonth() + 1
-    ).padStart(2, "0");
+      level: "error",
+    });
 
-  const day =
-    String(
-      date.getDate()
-    ).padStart(2, "0");
 
-  const hours =
-    String(
-      date.getHours()
-    ).padStart(2, "0");
+    return {
+      success: false,
 
-  const minutes =
-    String(
-      date.getMinutes()
-    ).padStart(2, "0");
-
-  const filename =
-    `la-toscana-backup-${year}-${month}-${day}-${hours}${minutes}.json`;
-
-  const link =
-    document.createElement(
-      "a"
-    );
-
-  link.href = url;
-  link.download =
-    filename;
-
-  document.body.appendChild(
-    link
-  );
-
-  link.click();
-
-  document.body.removeChild(
-    link
-  );
-
-  URL.revokeObjectURL(
-    url
-  );
-
-  return {
-    success: true,
-    filename,
-    backup,
-  };
+      message:
+        "No se pudo crear la copia de seguridad.",
+    };
+  }
 }
+
 
 export function validateBackup(
   backup
@@ -209,10 +299,12 @@ export function validateBackup(
   ) {
     return {
       valid: false,
+
       message:
         "El archivo no contiene una copia válida.",
     };
   }
+
 
   if (
     backup.meta?.app !==
@@ -220,10 +312,12 @@ export function validateBackup(
   ) {
     return {
       valid: false,
+
       message:
         "El archivo no pertenece a La Toscana.",
     };
   }
+
 
   if (
     backup.meta?.type !==
@@ -231,10 +325,12 @@ export function validateBackup(
   ) {
     return {
       valid: false,
+
       message:
         "El tipo de copia no es compatible.",
     };
   }
+
 
   if (
     !backup.data ||
@@ -243,10 +339,12 @@ export function validateBackup(
   ) {
     return {
       valid: false,
+
       message:
         "La copia no contiene datos restaurables.",
     };
   }
+
 
   const arrayFields = [
     "bookings",
@@ -256,6 +354,7 @@ export function validateBackup(
     "tables",
     "menu",
   ];
+
 
   for (
     const field
@@ -268,11 +367,13 @@ export function validateBackup(
     ) {
       return {
         valid: false,
+
         message:
           `El bloque "${field}" no es válido.`,
       };
     }
   }
+
 
   if (
     !backup.data.settings ||
@@ -282,15 +383,18 @@ export function validateBackup(
   ) {
     return {
       valid: false,
+
       message:
         "La configuración del backup no es válida.",
     };
   }
 
+
   return {
     valid: true,
   };
 }
+
 
 export function restoreBackup(
   backup
@@ -300,21 +404,45 @@ export function restoreBackup(
       backup
     );
 
+
   if (!validation.valid) {
+
+    createLog({
+      type: "BACKUP",
+
+      title:
+        "Restauración rechazada",
+
+      description:
+        validation.message,
+
+      level: "warning",
+    });
+
+
     return {
       success: false,
+
       message:
         validation.message,
     };
   }
 
+
   try {
+    const summary =
+      getBackupSummary(
+        backup
+      );
+
+
     localStorage.setItem(
       BACKUP_KEYS.bookings,
       JSON.stringify(
         backup.data.bookings
       )
     );
+
 
     localStorage.setItem(
       BACKUP_KEYS.customers,
@@ -323,12 +451,14 @@ export function restoreBackup(
       )
     );
 
+
     localStorage.setItem(
       BACKUP_KEYS.visits,
       JSON.stringify(
         backup.data.visits
       )
     );
+
 
     localStorage.setItem(
       BACKUP_KEYS.cash,
@@ -337,12 +467,14 @@ export function restoreBackup(
       )
     );
 
+
     localStorage.setItem(
       BACKUP_KEYS.tables,
       JSON.stringify(
         backup.data.tables
       )
     );
+
 
     localStorage.setItem(
       BACKUP_KEYS.menu,
@@ -351,6 +483,7 @@ export function restoreBackup(
       )
     );
 
+
     localStorage.setItem(
       BACKUP_KEYS.settings,
       JSON.stringify(
@@ -358,17 +491,61 @@ export function restoreBackup(
       )
     );
 
+
+    createLog({
+      type: "BACKUP",
+
+      title:
+        "Copia de seguridad restaurada",
+
+      description:
+        `Restauración completada. Se han recuperado ${summary.customers} clientes, ${summary.bookings} reservas, ${summary.visits} visitas, ${summary.cash} movimientos, ${summary.tables} mesas y ${summary.menu} elementos de carta.`,
+
+      level: "warning",
+
+      metadata: {
+        backupCreatedAt:
+          backup.meta
+            ?.createdAt,
+
+        summary,
+      },
+    });
+
+
     return {
       success: true,
     };
-  } catch {
+
+  } catch (error) {
+    console.error(
+      "No se pudo restaurar la copia de seguridad:",
+      error
+    );
+
+
+    createLog({
+      type: "BACKUP",
+
+      title:
+        "Error restaurando copia",
+
+      description:
+        "Se produjo un error mientras se restauraban los datos.",
+
+      level: "error",
+    });
+
+
     return {
       success: false,
+
       message:
         "No se pudo restaurar la copia de seguridad.",
     };
   }
 }
+
 
 export function readBackupFile(
   file
@@ -381,6 +558,7 @@ export function readBackupFile(
       const reader =
         new FileReader();
 
+
       reader.onload =
         () => {
           try {
@@ -389,10 +567,61 @@ export function readBackupFile(
                 reader.result
               );
 
+
+            const validation =
+              validateBackup(
+                backup
+              );
+
+
+            if (
+              !validation.valid
+            ) {
+              createLog({
+                type: "BACKUP",
+
+                title:
+                  "Archivo de backup inválido",
+
+                description:
+                  validation.message,
+
+                level:
+                  "warning",
+
+                metadata: {
+                  filename:
+                    file?.name ||
+                    null,
+                },
+              });
+            }
+
+
             resolve(
               backup
             );
+
           } catch {
+            createLog({
+              type: "BACKUP",
+
+              title:
+                "Archivo JSON inválido",
+
+              description:
+                "Se intentó abrir un archivo que no contiene JSON válido.",
+
+              level: "error",
+
+              metadata: {
+                filename:
+                  file?.name ||
+                  null,
+              },
+            });
+
+
             reject(
               new Error(
                 "El archivo seleccionado no contiene JSON válido."
@@ -401,14 +630,35 @@ export function readBackupFile(
           }
         };
 
+
       reader.onerror =
         () => {
+          createLog({
+            type: "BACKUP",
+
+            title:
+              "Error leyendo archivo",
+
+            description:
+              "No se pudo leer el archivo de copia de seguridad.",
+
+            level: "error",
+
+            metadata: {
+              filename:
+                file?.name ||
+                null,
+            },
+          });
+
+
           reject(
             new Error(
               "No se pudo leer el archivo."
             )
           );
         };
+
 
       reader.readAsText(
         file
