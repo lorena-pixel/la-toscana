@@ -1,0 +1,305 @@
+.public-info-page {
+  min-height: 100vh;
+  background: #faf7f2;
+}
+
+.public-info-hero {
+  padding: 100px 24px 80px;
+  text-align: center;
+  color: white;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      #925747 0%,
+      #4a2d26 45%,
+      #211713 100%
+    );
+}
+
+.public-info-hero > span {
+  display: block;
+  margin-bottom: 14px;
+
+  color: #d8a487;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.public-info-hero h1 {
+  margin-bottom: 18px;
+
+  font-family: Georgia, serif;
+  font-size: clamp(3rem, 7vw, 5rem);
+}
+
+.public-info-hero p {
+  max-width: 650px;
+  margin: 0 auto;
+
+  color: #eadfd9;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.about-page-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 90px 24px;
+
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr;
+  gap: 70px;
+  align-items: center;
+}
+
+.about-page-text h2,
+.contact-information h2 {
+  margin-bottom: 24px;
+
+  font-family: Georgia, serif;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+
+  color: #29221d;
+}
+
+.about-page-text p,
+.contact-information > p {
+  margin-bottom: 16px;
+
+  color: #655d56;
+  line-height: 1.8;
+}
+
+.about-page-card {
+  padding: 45px;
+
+  border-radius: 28px;
+
+  background: #7f1d1d;
+  color: white;
+
+  text-align: center;
+}
+
+.about-page-card > span {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.75rem;
+}
+
+.about-page-card strong {
+  display: block;
+
+  margin: 12px 0;
+
+  font-family: Georgia, serif;
+  font-size: 4rem;
+}
+
+.about-page-card p {
+  color: #f1d8d3;
+  line-height: 1.6;
+}
+
+.about-values {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px 90px;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.about-values article {
+  padding: 32px;
+
+  border: 1px solid #e3d9cf;
+  border-radius: 20px;
+
+  background: white;
+}
+
+.about-values article > span {
+  font-size: 2rem;
+}
+
+.about-values h3 {
+  margin: 15px 0 10px;
+
+  font-family: Georgia, serif;
+}
+
+.about-values p {
+  color: #71675f;
+  line-height: 1.6;
+}
+
+.contact-layout {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 90px 24px;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+}
+
+.contact-cards {
+  margin-top: 35px;
+
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.contact-cards article {
+  padding: 20px;
+
+  display: flex;
+  gap: 14px;
+
+  border: 1px solid #e5dcd3;
+  border-radius: 16px;
+
+  background: white;
+}
+
+.contact-cards article > span {
+  font-size: 1.5rem;
+}
+
+.contact-cards small {
+  display: block;
+  margin-bottom: 5px;
+
+  color: #93877e;
+}
+
+.contact-cards strong {
+  display: block;
+
+  color: #443a33;
+  line-height: 1.5;
+}
+
+.contact-map-placeholder {
+  min-height: 420px;
+  padding: 40px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 24px;
+
+  background: #e7ded4;
+
+  text-align: center;
+}
+
+.contact-map-placeholder > span {
+  font-size: 3rem;
+}
+
+.contact-map-placeholder h3 {
+  margin: 18px 0 8px;
+
+  font-family: Georgia, serif;
+  font-size: 1.8rem;
+}
+
+.contact-map-placeholder p {
+  color: #685e56;
+}
+
+.contact-map-placeholder small {
+  margin-top: 20px;
+  color: #91857c;
+}
+
+@media (max-width: 800px) {
+  .about-page-content,
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .about-values {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.not-found-page {
+  min-height: 70vh;
+
+  display: grid;
+  place-items: center;
+
+  padding: 60px 24px;
+
+  background: #faf7f2;
+}
+
+.not-found-card {
+  width: min(600px, 100%);
+
+  padding: 60px 30px;
+
+  border: 1px solid #e4dad1;
+  border-radius: 24px;
+
+  background: white;
+
+  text-align: center;
+}
+
+.not-found-card > span {
+  display: block;
+
+  margin-bottom: 12px;
+
+  color: #9f3527;
+
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+}
+
+.not-found-card h1 {
+  margin-bottom: 16px;
+
+  font-family: Georgia, serif;
+  font-size: clamp(2.2rem, 6vw, 4rem);
+
+  color: #302720;
+}
+
+.not-found-card p {
+  margin-bottom: 28px;
+
+  color: #766b63;
+  line-height: 1.7;
+}
+
+.not-found-card a {
+  display: inline-flex;
+
+  padding: 12px 20px;
+
+  border-radius: 999px;
+
+  background: #7f1d1d;
+  color: white;
+
+  font-weight: 800;
+}

@@ -1,0 +1,327 @@
+.navbar {
+  position: sticky;
+  top: 0;
+
+  z-index: 1000;
+
+  background: rgba(
+    255,
+    252,
+    247,
+    0.96
+  );
+
+  border-bottom:
+    1px solid #e8e0d5;
+
+  backdrop-filter: blur(10px);
+}
+
+.navbar__container {
+  max-width: 1200px;
+
+  min-height: 76px;
+
+  margin: 0 auto;
+  padding: 0 24px;
+
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navbar__brand {
+  margin-right: auto;
+
+  font-family: Georgia, serif;
+
+  font-size: 1.7rem;
+  font-weight: bold;
+
+  color: #7f1d1d;
+}
+
+.navbar__nav {
+  display: flex;
+  align-items: center;
+
+  gap: 26px;
+}
+
+.navbar__nav a {
+  position: relative;
+
+  padding: 8px 0;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  color: #403a35;
+}
+
+.navbar__nav a:hover {
+  color: #a33b2b;
+}
+
+.navbar__nav a::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: 2px;
+
+  width: 0;
+  height: 2px;
+
+  background: #7f1d1d;
+
+  transition: width 0.2s;
+}
+
+.navbar__nav a:hover::after {
+  width: 100%;
+}
+
+.navbar__booking {
+  flex-shrink: 0;
+
+  padding: 12px 18px;
+
+  border-radius: 999px;
+
+  background: #7f1d1d;
+  color: white;
+
+  font-weight: 700;
+
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+
+.navbar__booking:hover {
+  background: #681616;
+
+  transform:
+    translateY(-1px);
+}
+
+
+/* BOTÓN HAMBURGUESA */
+
+.navbar__menu-button {
+  width: 42px;
+  height: 42px;
+
+  display: none;
+
+  padding: 0;
+
+  border: 1px solid #ded5cc;
+  border-radius: 10px;
+
+  background: white;
+
+  cursor: pointer;
+}
+
+
+
+/* MENÚ MÓVIL */
+
+.navbar__mobile {
+  display: none;
+
+  max-height: 0;
+  overflow: hidden;
+
+  background: #fffdf9;
+
+  border-top:
+    1px solid transparent;
+
+  transition:
+    max-height 0.3s ease;
+}
+
+.navbar__mobile nav {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar__mobile nav a {
+  padding: 16px 22px;
+
+  border-bottom:
+    1px solid #eee6df;
+
+  color: #463c35;
+
+  font-weight: 700;
+}
+
+.navbar__mobile nav a:hover {
+  background: #faf5ef;
+
+  color: #7f1d1d;
+}
+
+.navbar__mobile-info {
+  padding: 18px 22px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  background: #f4eee7;
+
+  color: #776b62;
+
+  font-size: 0.8rem;
+}
+
+
+/* TABLET / MÓVIL */
+
+@media (max-width: 850px) {
+
+  .navbar__container {
+    min-height: 68px;
+  }
+
+  .navbar__nav {
+    display: none;
+  }
+
+  .navbar__menu-button {
+    display: block;
+  }
+
+  .navbar__mobile {
+    display: block;
+  }
+
+  .navbar__mobile--open {
+    max-height: 500px;
+
+    border-top-color:
+      #e8e0d5;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .navbar__container {
+    padding: 0 14px;
+
+    gap: 10px;
+  }
+
+  .navbar__brand {
+    font-size: 1.25rem;
+  }
+
+  .navbar__booking {
+    padding: 9px 12px;
+
+    font-size: 0.78rem;
+  }
+
+  .navbar__menu-button {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+
+@media (max-width: 400px) {
+
+  .navbar__booking {
+    display: none;
+  }
+
+  .navbar__brand {
+    font-size: 1.3rem;
+  }
+}
+/* ===== CORRECCIÓN MENÚ MÓVIL ===== */
+
+@media (max-width: 850px) {
+
+  .navbar__container {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 64px;
+
+    padding: 0 14px;
+  }
+
+  .navbar__brand {
+    margin-right: auto;
+  }
+
+  .navbar__nav {
+    display: none !important;
+  }
+
+  .navbar__menu-button {
+    display: flex !important;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 42px;
+    height: 42px;
+
+    flex: 0 0 42px;
+
+    margin-left: 8px;
+    padding: 0;
+
+    border: 1px solid #ded5cc;
+    border-radius: 10px;
+
+    background: #ffffff;
+    color: #7f1d1d;
+
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+
+    cursor: pointer;
+  }
+
+  .navbar__mobile {
+    display: block;
+
+    max-height: 0;
+    overflow: hidden;
+
+    background: #fffdf9;
+
+    transition: max-height 0.3s ease;
+  }
+
+  .navbar__mobile--open {
+    max-height: 500px;
+  }
+}
+
+
+/* MÓVILES MUY PEQUEÑOS */
+
+@media (max-width: 430px) {
+
+  .navbar__booking {
+    display: none;
+  }
+
+  .navbar__brand {
+    font-size: 1.25rem;
+  }
+
+}

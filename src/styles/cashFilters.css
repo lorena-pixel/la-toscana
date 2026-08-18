@@ -1,0 +1,83 @@
+.cash-filters {
+  margin-bottom: 26px;
+
+  display: grid;
+  grid-template-columns:
+    repeat(4, 1fr)
+    auto;
+
+  gap: 12px;
+
+  align-items: end;
+}
+
+.cash-filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  color: #6b6058;
+
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.cash-filters select,
+.cash-filters input {
+  min-height: 42px;
+
+  padding: 9px 10px;
+
+  border: 1px solid #d9cfc6;
+  border-radius: 9px;
+
+  background: white;
+
+  outline: none;
+}
+
+.cash-filters select:focus,
+.cash-filters input:focus {
+  border-color: #8f3327;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(143, 51, 39, 0.08);
+}
+
+.cash-clear-filters {
+  min-height: 42px;
+
+  padding: 0 15px;
+
+  border: 1px solid #d9cfc6;
+  border-radius: 9px;
+
+  background: #fffdf9;
+  color: #60564e;
+
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.cash-clear-filters:hover {
+  background: #f5eee7;
+}
+
+@media (max-width: 1050px) {
+  .cash-filters {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .cash-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .cash-clear-filters {
+    width: 100%;
+  }
+}

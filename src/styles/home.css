@@ -1,0 +1,234 @@
+.hero {
+  min-height: 690px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(20, 16, 12, 0.92),
+      rgba(20, 16, 12, 0.48)
+    ),
+    radial-gradient(circle at 80% 30%, #98624c 0%, #3d2c24 48%, #191511 100%);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 90px 24px;
+  color: white;
+}
+
+.hero__eyebrow,
+.section-label {
+  display: inline-block;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #b67655;
+}
+
+.hero h1 {
+  max-width: 720px;
+  font-family: Georgia, serif;
+  font-size: clamp(3.4rem, 8vw, 6.7rem);
+  line-height: 0.98;
+  margin-bottom: 28px;
+}
+
+.hero p {
+  max-width: 620px;
+  font-size: 1.2rem;
+  line-height: 1.7;
+  color: #e8ded7;
+}
+
+.hero__actions {
+  margin-top: 36px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.button--primary {
+  background: #9f3527;
+  color: white;
+}
+
+.button--secondary {
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: white;
+}
+
+.home-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 24px;
+}
+
+.about-section {
+  display: grid;
+  grid-template-columns: 1.5fr 0.7fr;
+  gap: 70px;
+  align-items: center;
+}
+
+.home-section__content h2,
+.section-heading h2 {
+  font-family: Georgia, serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  color: #29221d;
+  margin-bottom: 24px;
+}
+
+.home-section__content p {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  color: #655d56;
+  margin-bottom: 16px;
+}
+
+.about-card {
+  background: #7f1d1d;
+  color: white;
+  border-radius: 28px;
+  padding: 45px;
+  text-align: center;
+}
+
+.about-card span {
+  display: block;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.about-card strong {
+  display: block;
+  font-family: Georgia, serif;
+  font-size: 4rem;
+  margin: 10px 0;
+}
+
+.about-card p {
+  color: #f4dcd7;
+  line-height: 1.6;
+}
+
+.featured {
+  padding: 100px 24px;
+  background: #eee7dd;
+}
+
+.section-heading {
+  max-width: 1200px;
+  margin: 0 auto 50px;
+}
+
+.featured__grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.dish-card {
+  overflow: hidden;
+  background: white;
+  border-radius: 24px;
+  box-shadow: 0 12px 40px rgba(53, 40, 31, 0.08);
+}
+
+.dish-card__image {
+  min-height: 230px;
+  display: grid;
+  place-items: center;
+  font-size: 6rem;
+  background: #d8c3aa;
+}
+
+.dish-card__content {
+  padding: 26px;
+}
+
+.dish-card h3 {
+  font-family: Georgia, serif;
+  font-size: 1.45rem;
+  margin-bottom: 12px;
+}
+
+.dish-card p {
+  min-height: 52px;
+  line-height: 1.6;
+  color: #6c625b;
+}
+
+.dish-card__footer {
+  margin-top: 20px;
+  font-size: 1.2rem;
+  color: #7f1d1d;
+}
+
+.restaurant-info {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 100px 24px;
+
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.info-card {
+  padding: 36px;
+  border: 1px solid #e2d9cf;
+  border-radius: 24px;
+}
+
+.info-card span {
+  font-size: 2rem;
+}
+
+.info-card h3 {
+  margin: 18px 0 10px;
+  font-family: Georgia, serif;
+  font-size: 1.4rem;
+}
+
+.info-card p {
+  line-height: 1.6;
+  color: #6c625b;
+}
+
+@media (max-width: 850px) {
+  .about-section,
+  .featured__grid,
+  .restaurant-info {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: 600px;
+  }
+
+  .about-section {
+    gap: 40px;
+  }
+}

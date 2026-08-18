@@ -1,0 +1,266 @@
+.maintenance-refresh {
+  padding: 11px 16px;
+
+  border: 1px solid #cfd7e4;
+  border-radius: 9px;
+
+  background: white;
+  color: #445775;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.maintenance-refresh:hover {
+  background: #f4f7fb;
+}
+
+.maintenance-message {
+  margin-bottom: 20px;
+
+  padding: 13px 16px;
+
+  border-radius: 10px;
+
+  font-size: 0.84rem;
+  font-weight: 800;
+}
+
+.maintenance-message--success {
+  border: 1px solid #b9d8bf;
+
+  background: #edf8ef;
+  color: #3e7048;
+}
+
+.maintenance-message--error {
+  border: 1px solid #e6b9bf;
+
+  background: #fff0f2;
+  color: #9a3c48;
+}
+
+.maintenance-actions-panel {
+  margin-bottom: 22px;
+}
+
+.maintenance-main-actions {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 12px;
+}
+
+.maintenance-main-actions button {
+  padding: 12px 17px;
+
+  border-radius: 9px;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.maintenance-backup-button {
+  border: 1px solid #ced7e5;
+
+  background: #f7f9fc;
+  color: #455875;
+}
+
+.maintenance-repair-all {
+  border: none;
+
+  background: #5877ad;
+  color: white;
+}
+
+.maintenance-repair-all:hover {
+  background: #49699f;
+}
+
+.maintenance-repair-all:disabled {
+  opacity: 0.5;
+
+  cursor: not-allowed;
+}
+
+.maintenance-security-note {
+  max-width: 760px;
+
+  margin-top: 18px;
+
+  color: #7c8798;
+
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.maintenance-empty {
+  padding: 48px 20px;
+
+  text-align: center;
+}
+
+.maintenance-empty__icon {
+  width: 54px;
+  height: 54px;
+
+  margin: 0 auto 14px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  background: #e2f1e5;
+  color: #3f754a;
+
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.maintenance-empty h3 {
+  margin-bottom: 7px;
+
+  color: #354158;
+}
+
+.maintenance-empty p {
+  color: #7e8899;
+}
+
+.maintenance-repair-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.maintenance-repair-card {
+  padding: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 22px;
+
+  border: 1px solid #dde3ec;
+  border-radius: 11px;
+
+  background: #fafbfd;
+}
+
+.maintenance-repair-card__content {
+  flex: 1;
+}
+
+.maintenance-repair-card__content > span {
+  display: block;
+
+  margin-bottom: 4px;
+
+  color: #6780ab;
+
+  font-size: 0.68rem;
+  font-weight: 900;
+
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.maintenance-repair-card h3 {
+  margin-bottom: 6px;
+
+  color: #354158;
+
+  font-size: 0.95rem;
+}
+
+.maintenance-repair-card p {
+  color: #7b8697;
+
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.maintenance-repair-card > button {
+  flex-shrink: 0;
+
+  padding: 10px 14px;
+
+  border: 1px solid #cdd8e9;
+  border-radius: 8px;
+
+  background: #eef3fb;
+  color: #435d89;
+
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.maintenance-repair-card > button:hover {
+  background: #e4ecf8;
+}
+
+.maintenance-manual-panel {
+  margin-top: 22px;
+}
+
+.maintenance-manual-panel > p {
+  margin-bottom: 18px;
+
+  color: #7c8798;
+
+  line-height: 1.6;
+}
+
+.maintenance-manual-list {
+  display: grid;
+  grid-template-columns:
+    repeat(3, 1fr);
+
+  gap: 14px;
+}
+
+.maintenance-manual-list > div {
+  padding: 17px;
+
+  border: 1px solid #e1e5ec;
+  border-radius: 10px;
+
+  background: #fafbfc;
+}
+
+.maintenance-manual-list strong {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #3c485e;
+}
+
+.maintenance-manual-list span {
+  color: #7e8898;
+
+  font-size: 0.79rem;
+  line-height: 1.55;
+}
+
+@media (max-width: 800px) {
+  .maintenance-manual-list {
+    grid-template-columns: 1fr;
+  }
+
+  .maintenance-repair-card {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .maintenance-repair-card > button {
+    width: 100%;
+  }
+}
