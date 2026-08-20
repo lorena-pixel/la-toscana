@@ -17,6 +17,10 @@ import {
 } from "../../services/bookingService";
 
 import {
+  createPayment,
+} from "../../services/cashService";
+
+import {
   migrateTablesToNewLayout,
 } from "../../services/tableMigrationService";
 
@@ -35,6 +39,26 @@ function AdminTables() {
   const [
     message,
     setMessage,
+  ] = useState("");
+
+  const [
+    paymentTable,
+    setPaymentTable,
+  ] = useState(null);
+
+  const [
+    paymentAmount,
+    setPaymentAmount,
+  ] = useState("");
+
+  const [
+    paymentMethod,
+    setPaymentMethod,
+  ] = useState("Tarjeta");
+
+  const [
+    paymentError,
+    setPaymentError,
   ] = useState("");
 
 
@@ -78,9 +102,7 @@ function AdminTables() {
           ) {
             return {
               ...table,
-
               status: "Libre",
-
               bookingId: null,
             };
           }
@@ -94,11 +116,9 @@ function AdminTables() {
       cleanedTables
     );
 
-
     setTables(
       cleanedTables
     );
-
 
     setBookings(
       loadedBookings
@@ -153,7 +173,7 @@ function AdminTables() {
 
   /*
   =========================
-  MIGRACIÓN A 10 MESAS
+  MIGRACIÓN
   =========================
   */
 
@@ -161,7 +181,7 @@ function AdminTables() {
     () => {
       const confirmed =
         window.confirm(
-          "¿Quieres actualizar la distribución a 5 mesas de interior y 5 mesas de terraza?"
+          "¿Quieres actualizar la distribución de mesas?"
         );
 
 
@@ -188,7 +208,7 @@ function AdminTables() {
 
 
       setMessage(
-        "Distribución actualizada correctamente: Mesas 1-5 en Interior y Mesas 6-10 en Terraza."
+        "Distribución de mesas actualizada correctamente."
       );
     };
 
@@ -218,10 +238,16 @@ function AdminTables() {
     }
 
 
+    /*
+     * Si intenta marcar como
+     * completada desde el select
+     * y hay una reserva,
+     * usamos el flujo correcto.
+     */
     if (
       newStatus === "Completada"
     ) {
-      handleCompleteBooking(
+      handleFinishRequest(
         table
       );
 
@@ -251,7 +277,6 @@ function AdminTables() {
     setTables(
       updatedTables
     );
-
 
     saveTables(
       updatedTables
@@ -332,7 +357,6 @@ function AdminTables() {
       updatedTables
     );
 
-
     saveTables(
       updatedTables
     );
@@ -375,43 +399,29 @@ function AdminTables() {
 
   /*
   =========================
-  COMPLETAR RESERVA
+  ABRIR COBRO / FINALIZAR
   =========================
   */
 
-  const handleCompleteBooking = (
+  const handleFinishRequest = (
     table
   ) => {
     setMessage("");
+    setPaymentError("");
 
 
     if (!table.bookingId) {
-      const updatedTables =
-        tables.map(
-          (item) =>
-            item.id === table.id
-              ? {
-                  ...item,
-
-                  status:
-                    "Libre",
-
-                  bookingId:
-                    null,
-                }
-              : item
-        );
-
-
-      setTables(
-        updatedTables
+      /*
+       * Mesa sin reserva:
+       * simplemente la liberamos.
+       */
+      releaseTable(
+        table.id
       );
 
-
-      saveTables(
-        updatedTables
+      setMessage(
+        `${table.name} liberada correctamente.`
       );
-
 
       return;
     }
@@ -425,16 +435,193 @@ function AdminTables() {
       );
 
 
-    if (booking) {
+    if (!booking) {
+      releaseTable(
+        table.id
+      );
+
+      setMessage(
+        `${table.name} liberada. La reserva asociada ya no existe.`
+      );
+
+      return;
+    }
+
+
+    /*
+     * Si ya está pagada,
+     * NO cobramos otra vez.
+     */
+    if (
+      booking.paymentStatus ===
+      "Pagado"
+    ) {
+      finalizeBookingAndTable(
+        booking,
+        table
+      );
+
+      return;
+    }
+
+
+    setPaymentTable(
+      table
+    );
+
+
+    setPaymentAmount(
+      booking.amount
+        ? String(
+            booking.amount
+          )
+        : ""
+    );
+
+
+    setPaymentMethod(
+      booking.paymentMethod ||
+      "Tarjeta"
+    );
+  };
+
+
+  /*
+  =========================
+  COBRAR Y FINALIZAR
+  =========================
+  */
+
+  const handlePayAndFinish =
+    () => {
+      setPaymentError("");
+
+
+      if (!paymentTable) {
+        return;
+      }
+
+
+      const booking =
+        bookings.find(
+          (item) =>
+            item.id ===
+            paymentTable.bookingId
+        );
+
+
+      if (!booking) {
+        setPaymentError(
+          "No se ha encontrado la reserva."
+        );
+
+        return;
+      }
+
+
+      const normalizedAmount =
+        String(
+          paymentAmount
+        )
+          .replace(",", ".")
+          .trim();
+
+
+      const amount =
+        Number(
+          normalizedAmount
+        );
+
+
+      if (
+        !amount ||
+        amount <= 0
+      ) {
+        setPaymentError(
+          "Introduce un importe válido."
+        );
+
+        return;
+      }
+
+
+      /*
+      =========================
+      REGISTRAR EN CAJA
+      =========================
+      */
+
+      const paymentResult =
+        createPayment({
+          bookingId:
+            booking.id,
+
+          visitId:
+            null,
+
+          customerId:
+            booking.customerId ||
+            null,
+
+          customerName:
+            booking.name ||
+            "",
+
+          amount,
+
+          paymentMethod,
+
+          concept:
+            `Reserva · ${booking.name} · ${paymentTable.name}`,
+        });
+
+
+      if (
+        !paymentResult.success
+      ) {
+        /*
+         * createPayment impide
+         * duplicar un cobro.
+         */
+        setPaymentError(
+          paymentResult.message ||
+          "No se pudo registrar el pago."
+        );
+
+        return;
+      }
+
+
+      /*
+      =========================
+      MARCAR RESERVA PAGADA
+      Y FINALIZADA
+      =========================
+      */
+
+      const now =
+        new Date()
+          .toISOString();
+
+
       const updatedBooking = {
         ...booking,
+
+        paymentStatus:
+          "Pagado",
+
+        amount,
+
+        paymentMethod,
+
+        paidAt:
+          now,
 
         status:
           "Finalizada",
 
         updatedAt:
-          new Date()
-            .toISOString(),
+          now,
       };
 
 
@@ -448,18 +635,119 @@ function AdminTables() {
           current.map(
             (item) =>
               item.id ===
-              booking.id
+              updatedBooking.id
                 ? updatedBooking
                 : item
           )
       );
-    }
 
 
+      /*
+      =========================
+      LIBERAR MESA
+      =========================
+      */
+
+      releaseTable(
+        paymentTable.id
+      );
+
+
+      /*
+      =========================
+      CERRAR MODAL
+      =========================
+      */
+
+      setPaymentTable(
+        null
+      );
+
+      setPaymentAmount(
+        ""
+      );
+
+      setPaymentMethod(
+        "Tarjeta"
+      );
+
+      setPaymentError(
+        ""
+      );
+
+
+      setMessage(
+        `${paymentTable.name} cobrada y finalizada correctamente. Pago registrado: ${amount.toFixed(
+          2
+        )} €.`
+      );
+    };
+
+
+  /*
+  =========================
+  FINALIZAR YA PAGADA
+  =========================
+  */
+
+  const finalizeBookingAndTable = (
+    booking,
+    table
+  ) => {
+    const updatedBooking = {
+      ...booking,
+
+      status:
+        "Finalizada",
+
+      updatedAt:
+        new Date()
+          .toISOString(),
+    };
+
+
+    updateBooking(
+      updatedBooking
+    );
+
+
+    setBookings(
+      (current) =>
+        current.map(
+          (item) =>
+            item.id ===
+            booking.id
+              ? updatedBooking
+              : item
+        )
+    );
+
+
+    releaseTable(
+      table.id
+    );
+
+
+    setMessage(
+      `${table.name} finalizada y liberada. La reserva ya estaba pagada.`
+    );
+  };
+
+
+  /*
+  =========================
+  LIBERAR MESA
+  =========================
+  */
+
+  const releaseTable = (
+    tableId
+  ) => {
     const updatedTables =
       tables.map(
         (item) =>
-          item.id === table.id
+          item.id ===
+          tableId
             ? {
                 ...item,
 
@@ -467,6 +755,9 @@ function AdminTables() {
                   "Libre",
 
                 bookingId:
+                  null,
+
+                visitId:
                   null,
               }
             : item
@@ -477,14 +768,8 @@ function AdminTables() {
       updatedTables
     );
 
-
     saveTables(
       updatedTables
-    );
-
-
-    setMessage(
-      `${table.name} liberada correctamente.`
     );
   };
 
@@ -559,30 +844,8 @@ function AdminTables() {
     );
 
 
-    const updatedTables =
-      tables.map(
-        (item) =>
-          item.id === table.id
-            ? {
-                ...item,
-
-                status:
-                  "Libre",
-
-                bookingId:
-                  null,
-              }
-            : item
-      );
-
-
-    setTables(
-      updatedTables
-    );
-
-
-    saveTables(
-      updatedTables
+    releaseTable(
+      table.id
     );
 
 
@@ -613,7 +876,7 @@ function AdminTables() {
 
   /*
   =========================
-  ESTADÍSTICAS GENERALES
+  ESTADÍSTICAS
   =========================
   */
 
@@ -714,7 +977,8 @@ function AdminTables() {
         </div>
 
 
-        {areaTables.length === 0 ? (
+        {areaTables.length ===
+        0 ? (
 
           <div className="tables-area__empty">
 
@@ -738,7 +1002,9 @@ function AdminTables() {
                 return (
                   <article
                     className={`table-card table-card--${table.status.toLowerCase()}`}
-                    key={table.id}
+                    key={
+                      table.id
+                    }
                   >
 
                     <div className="table-card__top">
@@ -886,6 +1152,7 @@ function AdminTables() {
 
 
                         <p>
+
                           {
                             assignedBooking.guests
                           }{" "}
@@ -893,15 +1160,53 @@ function AdminTables() {
                           {
                             assignedBooking.time
                           }
+
                         </p>
 
 
                         <p>
+
                           Estado:{" "}
                           {
                             assignedBooking.status
                           }
+
                         </p>
+
+
+                        <p>
+
+                          Pago:{" "}
+
+                          <strong>
+                            {
+                              assignedBooking.paymentStatus ||
+                              "Pendiente"
+                            }
+                          </strong>
+
+                        </p>
+
+
+                        {assignedBooking.paymentStatus ===
+                          "Pagado" &&
+                          assignedBooking.amount >
+                            0 && (
+
+                          <p>
+
+                            Importe:{" "}
+
+                            {Number(
+                              assignedBooking.amount
+                            ).toFixed(
+                              2
+                            )}{" "}
+                            €
+
+                          </p>
+
+                        )}
 
 
                         <div className="table-card__booking-actions">
@@ -911,12 +1216,17 @@ function AdminTables() {
                             className="table-complete-button"
                             onClick={
                               () =>
-                                handleCompleteBooking(
+                                handleFinishRequest(
                                   table
                                 )
                             }
                           >
-                            ✓ Completar
+
+                            {assignedBooking.paymentStatus ===
+                            "Pagado"
+                              ? "✓ Finalizar mesa"
+                              : "💳 Cobrar y finalizar"}
+
                           </button>
 
 
@@ -980,8 +1290,9 @@ function AdminTables() {
             </h1>
 
             <p>
-              Gestiona por separado las mesas
-              de interior y terraza.
+              Gestiona las mesas,
+              reservas y cobros desde
+              el mismo lugar.
             </p>
 
           </div>
@@ -1008,8 +1319,6 @@ function AdminTables() {
 
         )}
 
-
-        {/* RESUMEN GENERAL */}
 
         <section className="admin-stats">
 
@@ -1083,15 +1392,11 @@ function AdminTables() {
         </section>
 
 
-        {/* INTERIOR */}
-
         {renderArea(
           "Interior",
           interiorTables
         )}
 
-
-        {/* TERRAZA */}
 
         {renderArea(
           "Terraza",
@@ -1099,6 +1404,179 @@ function AdminTables() {
         )}
 
       </main>
+
+
+      {/* =========================
+          MODAL COBRO
+      ========================= */}
+
+      {paymentTable && (
+
+        <div
+          className="customer-modal-overlay"
+          onClick={
+            () => {
+              setPaymentTable(
+                null
+              );
+
+              setPaymentError(
+                ""
+              );
+            }
+          }
+        >
+
+          <article
+            className="customer-modal walkin-payment-modal"
+            onClick={
+              (event) =>
+                event.stopPropagation()
+            }
+          >
+
+            <button
+              type="button"
+              className="customer-modal__close"
+              onClick={
+                () => {
+                  setPaymentTable(
+                    null
+                  );
+
+                  setPaymentError(
+                    ""
+                  );
+                }
+              }
+            >
+              ×
+            </button>
+
+
+            <span className="customer-modal__label">
+              Cobro de mesa
+            </span>
+
+
+            <h2>
+              {
+                paymentTable.name
+              }
+            </h2>
+
+
+            {(() => {
+              const booking =
+                bookings.find(
+                  (item) =>
+                    item.id ===
+                    paymentTable.bookingId
+                );
+
+
+              return booking ? (
+
+                <p className="walkin-payment-info">
+
+                  {booking.name}
+                  {" · "}
+                  {booking.guests} personas
+
+                </p>
+
+              ) : null;
+            })()}
+
+
+            <div className="walkin-form">
+
+              <label>
+
+                Importe total
+
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="0,00"
+                  value={
+                    paymentAmount
+                  }
+                  onChange={
+                    (event) =>
+                      setPaymentAmount(
+                        event.target.value
+                      )
+                  }
+                  autoFocus
+                />
+
+              </label>
+
+
+              <label>
+
+                Método de pago
+
+                <select
+                  value={
+                    paymentMethod
+                  }
+                  onChange={
+                    (event) =>
+                      setPaymentMethod(
+                        event.target.value
+                      )
+                  }
+                >
+
+                  <option>
+                    Tarjeta
+                  </option>
+
+                  <option>
+                    Efectivo
+                  </option>
+
+                  <option>
+                    Bizum
+                  </option>
+
+                  <option>
+                    Transferencia
+                  </option>
+
+                </select>
+
+              </label>
+
+
+              {paymentError && (
+
+                <div className="maintenance-message maintenance-message--error">
+                  {paymentError}
+                </div>
+
+              )}
+
+
+              <button
+                type="button"
+                className="walkin-pay-button"
+                onClick={
+                  handlePayAndFinish
+                }
+              >
+                💳 Cobrar y finalizar mesa
+              </button>
+
+            </div>
+
+          </article>
+
+        </div>
+
+      )}
 
     </div>
   );
